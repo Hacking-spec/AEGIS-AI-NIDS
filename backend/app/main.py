@@ -11,7 +11,7 @@ from datetime import datetime
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, UploadFile, File, Query, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
 
 from backend.app.config import settings, BASE_DIR, EXPORTS_DIR
 from backend.app.models.schemas import (
@@ -286,11 +286,28 @@ def launch_simulation(req: SimulationRequest):
 
 
 # -------------------------------------------------------------
-# Static Frontend Assets
+# Static Frontend Assets & Web Dashboard
 # -------------------------------------------------------------
+PUBLIC_DIR = BASE_DIR / "public"
+
+if PUBLIC_DIR.exists():
+    if (PUBLIC_DIR / "css").exists():
+        app.mount("/css", StaticFiles(directory=PUBLIC_DIR / "css"), name="public_css")
+    if (PUBLIC_DIR / "js").exists():
+        app.mount("/js", StaticFiles(directory=PUBLIC_DIR / "js"), name="public_js")
+
 if FRONTEND_DIR.exists():
     app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
 
-    @app.get("/")
-    def serve_index():
-        return FileResponse(FRONTEND_DIR / "index.html")
+@app.get("/", response_class=HTMLResponse)
+def serve_index():
+    candidates = [
+        PUBLIC_DIR / "index.html",
+        FRONTEND_DIR / "index.html",
+        Path("public/index.html"),
+        Path("frontend/index.html")
+    ]
+    for path in candidates:
+        if path.exists():
+            return HTMLResponse(content=path.read_text(encoding="utf-8"))
+    return HTMLResponse("<h1>AEGIS AI-NIDS SOC Dashboard Running</h1>", status_code=200)
