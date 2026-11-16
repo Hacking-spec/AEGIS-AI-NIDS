@@ -1,0 +1,28 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Environments
+env/
+venv/
+.venv/
+
+# SQLite databases & transient runtime data
+data/*.db
+data/exports/*.pcap
+data/exports/*.json
+data/samples/
+data/threat_feeds/
+
+# Operating System & IDE artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
+
+# Vercel build output
+.vercel/

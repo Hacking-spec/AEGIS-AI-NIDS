@@ -1,0 +1,15 @@
+# Vercel Deployment Ignore Rules
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.git/
+.gitignore
+tests/
+.pytest_cache/
+scratch/
+.system_generated/
+data/*.db
+data/exports/*
+*.log
+
